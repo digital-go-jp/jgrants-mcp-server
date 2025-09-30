@@ -38,7 +38,7 @@
 
 ```bash
 # リポジトリのクローン
-git clone https://github.com/yourusername/jgrants-mcp-server.git
+git clone https://github.com/digital-go-jp/jgrants-mcp-server.git
 cd jgrants-mcp-server
 
 # Python仮想環境の作成
