@@ -7,26 +7,26 @@
 デジタル庁が運用する補助金電子申請システム「**Jグランツ**」の公開APIをModel Context Protocol（MCP）サーバーとして実装。FastMCPフレームワークを使用し、LLMから自然言語で補助金検索・詳細取得が可能です。
 
 
-## ✨ 特徴
+## 特徴
 
-- 🌐 **リモート対応**: Streamable-HTTP経由でリモート接続可能
-- 🔍 **高度な検索機能**: キーワード、業種、従業員数、地域での絞り込み
-- 📊 **統計分析**: 補助金の統計情報を自動集計（締切期間別、金額規模別）
-- 📁 **ファイルダウンロード**: 募集要項や申請書類の自動ダウンロード・保存
-- 📄 **添付資料アクセス**: PDFなどの添付資料をMarkdown/BASE64形式で取得可能
-- 🤖 **LLM統合**: 自然言語での補助金検索と詳細取得
-- 📝 **ファイル変換**: PDF、Word、Excel、ZIPなど多様な形式をMarkdownに変換
-- 🔄 **動的ツール検出**: サーバーのツール変更を自動検出・適応
-- 🏗️ **FastMCP**: 最新のFastMCPフレームワーク (v2.12.2) を使用
-- 📚 **Prompts/Resources**: LLM向けのガイドとリソースを提供
+- **リモート対応**: Streamable-HTTP経由でリモート接続可能
+- **高度な検索機能**: キーワード、業種、従業員数、地域での絞り込み
+- **統計分析**: 補助金の統計情報を自動集計（締切期間別、金額規模別）
+- **ファイルダウンロード**: 募集要項や申請書類の自動ダウンロード・保存
+- **添付資料アクセス**: PDFなどの添付資料をMarkdown/BASE64形式で取得可能
+- **LLM統合**: 自然言語での補助金検索と詳細取得
+- **ファイル変換**: PDF、Word、Excel、ZIPなど多様な形式をMarkdownに変換
+- **動的ツール検出**: サーバーのツール変更を自動検出・適応
+- **FastMCP**: 最新のFastMCPフレームワーク (v2.12.2) を使用
+- **Prompts/Resources**: LLM向けのガイドとリソースを提供
 
-## 🤖 動作確認環境
+## 動作確認環境
 
 - **Claude Desktop**: v0.7.10以上
 - **Python**: 3.11以上
 - **FastMCP**: 2.12.2以上
 
-## 🚀 クイックスタート
+## クイックスタート
 
 ### 前提条件
 
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 export JGRANTS_FILES_DIR=/tmp/jgrants_files
 ```
 
-## 🌐 サーバー起動
+## サーバー起動
 
 ### HTTPサーバーモード
 
@@ -83,7 +83,7 @@ python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8080
 - **MCP エンドポイント**: `http://localhost:8000/mcp`
 - **トランスポート**: Streamable-HTTP
 
-## 🖥️ Claude Desktop との連携
+## Claude Desktop との連携
 
 ### FastMCP CLI経由での接続（推奨）
 
@@ -145,7 +145,7 @@ Claude Desktopを開き、新しい会話で以下のように質問してみて
 
 サーバーが正しく設定されていれば、利用可能なツールの一覧が表示されます。
 
-## 📚 Prompts と Resources
+## Prompts と Resources
 
 MCPサーバーは、LLMが効果的にツールを使用できるよう、プロンプトとリソースを提供します。
 
@@ -158,7 +158,7 @@ MCPサーバーは、LLMが効果的にツールを使用できるよう、プ�
 
 - **`jgrants://guidelines`**: MCPサーバー利用ガイドライン、API制限、トラブルシューティング
 
-## 🛠️ 利用可能なツール
+## 利用可能なツール
 
 ### 1. `search_subsidies`
 補助金を検索します。キーワード、業種、地域、従業員数などで絞り込み可能。
@@ -204,7 +204,7 @@ MCPサーバーは、LLMが効果的にツールを使用できるよう、プ�
 ### 5. `ping`
 サーバーの疎通確認を行います。
 
-## 🔧 開発とテスト
+## 開発とテスト
 
 ### テスト実行
 
@@ -220,7 +220,7 @@ pytest tests/test_core.py
 python -m jgrants_mcp_server.core --log-level DEBUG
 ```
 
-## 📜 ライセンス
+## ライセンス
 
 MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください。
 
