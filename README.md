@@ -80,7 +80,7 @@ python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8080
 ```
 
 サーバー起動後、以下のエンドポイントが利用可能になります：
-- **MCP エンドポイント**: `http://localhost:8000/mcp`
+- **MCP エンドポイント**: `http://localhost:8000/mcp` もしくは `http://127.0.0.1:8000/mcp`
 - **トランスポート**: Streamable-HTTP
 
 ## Claude Desktop との連携
@@ -117,6 +117,7 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
    ```
 
    **備考**:
+   - localhostでうまくいかない場合は 127.0.0.1 でお試しください
    - `uvx`は`uv`のコマンドラインツール実行機能です（`pip install uv`でインストール）
    - `uvx`がインストールされていない場合は、`fastmcp`を直接使用することもできます：
      ```json
@@ -133,7 +134,7 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
      }
      ```
 
-3. **Claude Desktop を再起動**
+4. **Claude Desktop を再起動**
 
 ### 接続確認
 
