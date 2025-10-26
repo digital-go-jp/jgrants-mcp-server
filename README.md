@@ -53,6 +53,25 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### UV を使った環境セットアップ（推奨）
+
+[UV](https://docs.astral.sh/uv/) は高速なPythonパッケージマネージャーです。より高速なインストールを実現します。
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/digital-go-jp/jgrants-mcp-server.git
+cd jgrants-mcp-server
+
+# UVで仮想環境を作成
+uv venv
+
+# 仮想環境の有効化
+source .venv/bin/activate
+
+# UVで依存パッケージをインストール
+uv pip install -r requirements.txt
+```
+
 ### 環境変数（オプション）
 
 必要に応じて以下の環境変数を設定できます：
@@ -77,6 +96,18 @@ python -m jgrants_mcp_server.core
 
 # ホストとポートを指定
 python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8080
+```
+
+### UV を使った起動
+
+UV を使った場合、`uv run` で直接サーバーを起動できます：
+
+```bash
+# HTTPサーバーを起動（デフォルト: localhost:8000）
+uv run python -m jgrants_mcp_server.core
+
+# ホストとポートを指定
+uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484
 ```
 
 サーバー起動後、以下のエンドポイントが利用可能になります：
@@ -135,6 +166,46 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
      ```
 
 4. **Claude Desktop を再起動**
+
+### Roo-Code (Claude Desktop) でのStreamable-HTTP接続
+
+リモートサーバーで起動したMCPサーバーに直接接続する場合は、Streamable-HTTP形式で設定します。
+
+1. **リモートサーバーでMCPサーバーを起動**:
+   ```bash
+   uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484
+   ```
+
+2. **Claude Desktop 設定ファイルを編集**:
+
+   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+   **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+   ```json
+   {
+     "mcpServers": {
+       "jgrants": {
+         "type": "streamable-http",
+         "url": "http://192.168.0.131:8484/mcp",
+         "alwaysAllow": [
+           "search_subsidies",
+           "get_subsidy_detail",
+           "get_subsidy_overview",
+           "get_file_content",
+           "ping"
+         ]
+       }
+     }
+   }
+   ```
+
+   **備考**:
+   - `url` には実際のサーバーのIPアドレスとポート番号を指定してください
+   - `alwaysAllow` は自動的に実行を許可するツールの一覧です（省略可）
+   - リモート接続の場合、ファイアウォールやネットワーク設定を確認してください
+
+3. **Claude Desktop を再起動**
 
 ### 接続確認
 
