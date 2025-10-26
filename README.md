@@ -53,6 +53,25 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### UV を使った環境セットアップ（推奨）
+
+[UV](https://docs.astral.sh/uv/) は高速なPythonパッケージマネージャーです。より高速なインストールを実現します。
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/digital-go-jp/jgrants-mcp-server.git
+cd jgrants-mcp-server
+
+# UVで仮想環境を作成
+uv venv
+
+# 仮想環境の有効化
+source .venv/bin/activate
+
+# UVで依存パッケージをインストール
+uv pip install -r requirements.txt
+```
+
 ### 環境変数（オプション）
 
 必要に応じて以下の環境変数を設定できます：
@@ -77,6 +96,18 @@ python -m jgrants_mcp_server.core
 
 # ホストとポートを指定
 python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8080
+```
+
+### UV を使った起動
+
+UV を使った場合、`uv run` で直接サーバーを起動できます：
+
+```bash
+# HTTPサーバーを起動（デフォルト: localhost:8000）
+uv run python -m jgrants_mcp_server.core
+
+# ホストとポートを指定
+uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484
 ```
 
 サーバー起動後、以下のエンドポイントが利用可能になります：
@@ -136,9 +167,59 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
 
 4. **Claude Desktop を再起動**
 
+## Roo-Code との連携
+
+[Roo-Code](https://roocode.com/) は VS Code 拡張機能で、Streamable-HTTP 経由での MCP サーバー接続をサポートしています。
+
+### Streamable-HTTP接続の設定
+
+1. **リモートサーバーでMCPサーバーを起動**:
+   ```bash
+   uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484
+   ```
+
+2. **Roo-Code の MCP 設定ファイルを編集**:
+
+   VS Code で Roo-Code 拡張機能をインストール後、MCP 設定を編集します。
+
+   詳細な設定方法は [Roo-Code MCP ドキュメント](https://docs.roocode.com/features/mcp/using-mcp-in-roo?utm_source=extension&utm_medium=ide&utm_campaign=mcp_edit_settings#editing-mcp-settings-files) を参照してください。
+
+   ```json
+   {
+     "mcpServers": {
+       "jgrants": {
+         "type": "streamable-http",
+         "url": "http://192.168.0.131:8484/mcp",
+         "alwaysAllow": [
+           "search_subsidies",
+           "get_subsidy_detail",
+           "get_subsidy_overview",
+           "get_file_content",
+           "ping"
+         ]
+       }
+     }
+   }
+   ```
+
+   **備考**:
+   - `url` には実際のサーバーのIPアドレスとポート番号を指定してください
+   - `alwaysAllow` は自動的に実行を許可するツールの一覧です（省略可）
+   - リモート接続の場合、ファイアウォールやネットワーク設定を確認してください
+
+3. **VS Code を再起動**
+
 ### 接続確認
 
-Claude Desktopを開き、新しい会話で以下のように質問してみてください：
+**Claude Desktop の場合:**
+Claude Desktop を開き、新しい会話で以下のように質問してみてください：
+
+```
+補助金を検索できますか？
+```
+
+**Roo-Code の場合:**
+VS Code で Roo-Code を開き、チャットで以下のように質問してみてください：
 
 ```
 補助金を検索できますか？
