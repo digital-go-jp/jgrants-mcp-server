@@ -167,20 +167,22 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
 
 4. **Claude Desktop を再起動**
 
-### Roo-Code (Claude Desktop) でのStreamable-HTTP接続
+## Roo-Code との連携
 
-リモートサーバーで起動したMCPサーバーに直接接続する場合は、Streamable-HTTP形式で設定します。
+[Roo-Code](https://roocode.com/) は VS Code 拡張機能で、Streamable-HTTP 経由での MCP サーバー接続をサポートしています。
+
+### Streamable-HTTP接続の設定
 
 1. **リモートサーバーでMCPサーバーを起動**:
    ```bash
    uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484
    ```
 
-2. **Claude Desktop 設定ファイルを編集**:
+2. **Roo-Code の MCP 設定ファイルを編集**:
 
-   **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
-   **Linux**: `~/.config/Claude/claude_desktop_config.json`
+   VS Code で Roo-Code 拡張機能をインストール後、MCP 設定を編集します。
+
+   詳細な設定方法は [Roo-Code MCP ドキュメント](https://docs.roocode.com/features/mcp/using-mcp-in-roo?utm_source=extension&utm_medium=ide&utm_campaign=mcp_edit_settings#editing-mcp-settings-files) を参照してください。
 
    ```json
    {
@@ -205,11 +207,19 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
    - `alwaysAllow` は自動的に実行を許可するツールの一覧です（省略可）
    - リモート接続の場合、ファイアウォールやネットワーク設定を確認してください
 
-3. **Claude Desktop を再起動**
+3. **VS Code を再起動**
 
 ### 接続確認
 
-Claude Desktopを開き、新しい会話で以下のように質問してみてください：
+**Claude Desktop の場合:**
+Claude Desktop を開き、新しい会話で以下のように質問してみてください：
+
+```
+補助金を検索できますか？
+```
+
+**Roo-Code の場合:**
+VS Code で Roo-Code を開き、チャットで以下のように質問してみてください：
 
 ```
 補助金を検索できますか？
