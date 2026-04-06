@@ -27,6 +27,14 @@ mcp = FastMCP("jgrants-mcp-server")
 FILES_DIR = Path(os.environ.get("JGRANTS_FILES_DIR", "tmp"))
 FILES_DIR.mkdir(parents=True, exist_ok=True)
 
+def _safe_path(base: Path, *parts: str) -> Path:
+    """base 配下に収まることを保証してパスを返す。パストラバーサル対策。"""
+    resolved = (base / Path(*parts)).resolve()
+    if not resolved.is_relative_to(base.resolve()):
+        raise ValueError("不正なパスです")
+    return resolved
+
+
 _HTTP_CLIENT: Optional[httpx.AsyncClient] = None
 
 
@@ -529,7 +537,7 @@ async def get_subsidy_detail(subsidy_id: str) -> Dict[str, Any]:
             "application_form": subsidy.get("application_form", [])
         }
 
-        subsidy_dir = FILES_DIR / subsidy_id
+        subsidy_dir = _safe_path(FILES_DIR, subsidy_id)
         subsidy_dir.mkdir(exist_ok=True)
 
         saved_files = {}
@@ -553,10 +561,7 @@ async def get_subsidy_detail(subsidy_id: str) -> Dict[str, Any]:
 
                         # デバッグログ（環境変数で有効化時のみ）
                         if debug_files:
-                            with open("/tmp/jgrants_debug.log", "a") as debug_log:
-                                debug_log.write(
-                                    f"DEBUG: file_name={file_name}, file_base64 length={len(file_base64) if file_base64 else 0}\n"
-                                )
+                            logger.debug(f"file_name={file_name}, file_base64 length={len(file_base64) if file_base64 else 0}")
                         if file_base64:
                             try:
                                 # BASE64データの検証
@@ -656,7 +661,7 @@ async def get_file_content(subsidy_id: str, filename: str, return_format: str = 
         # デバッグ: パラメータを確認
         logger.info(f"get_file_content called with subsidy_id={subsidy_id}, filename={filename}, return_format={return_format}")
 
-        file_path = FILES_DIR / subsidy_id / filename
+        file_path = _safe_path(FILES_DIR, subsidy_id, filename)
         logger.info(f"Looking for file at: {file_path}")
 
         if not file_path.exists():
