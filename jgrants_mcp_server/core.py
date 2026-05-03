@@ -302,6 +302,15 @@ async def get_subsidy_overview(output_format: str = "json") -> Dict[str, Any]:
                 else:
                     stats["by_deadline_period"]["after_next_month"] += 1
 
+                # 現在受付中の判定: 開始日時が過去かつ終了日時が未来であること
+                # Check if currently accepting: start_datetime has passed and end_datetime is in the future
+                if subsidy.get("acceptance_start_datetime"):
+                    start_date = datetime.fromisoformat(
+                        subsidy["acceptance_start_datetime"].replace("Z", "+00:00")
+                    )
+                    if start_date <= now:
+                        stats["by_deadline_period"]["accepting"] += 1
+
                 # 緊急案件（14日以内）
                 if 0 <= days_left <= 14:
                     stats["urgent_deadlines"].append({
