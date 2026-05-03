@@ -1,0 +1,9 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+.env
+tests/
+*.md
+.cookbook-candidates/
