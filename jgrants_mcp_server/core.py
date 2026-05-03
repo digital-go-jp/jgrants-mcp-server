@@ -861,12 +861,17 @@ def main():
 
     args = parser.parse_args()
 
-    # 常にStreamable HTTPサーバーを起動
-    mcp.run(transport="streamable-http", host=args.host, port=args.port)
+    # Streamable HTTPサーバーを起動
+    # stateless_http=True: リクエスト間でセッション状態を保持しない。
+    # Cloud Run / Fly.io / Render などステートレス環境での運用に必要。
+    # stateless_http=True: do not persist session state across requests.
+    # Required for stateless runtimes (Cloud Run, Fly.io, Render, etc.).
+    # Ref: https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http
+    mcp.run(transport="streamable-http", host=args.host, port=args.port, stateless_http=True)
 
 
-# ASGIアプリケーションをエクスポート
-app = mcp.http_app()
+# ASGIアプリケーションをエクスポート（ステートレスモード / in stateless mode）
+app = mcp.http_app(stateless_http=True)
 # FastMCPアプリケーションの名前を設定
 if hasattr(app, '__setattr__'):
     app.name = "jgrants-mcp-server"
