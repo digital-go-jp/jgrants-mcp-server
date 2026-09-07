@@ -174,8 +174,16 @@ Claude Desktop は stdio 接続のみサポートするため、FastMCP CLIをHT
 ### Streamable-HTTP接続の設定
 
 1. **リモートサーバーでMCPサーバーを起動**:
+
+   > ⚠️ **注意**: このサーバーは認証を実装していません。`--host 0.0.0.0` で
+   > バインドすると、到達可能な範囲にいる誰でも認証なしで全ツールを呼び出せる
+   > 状態になります（v0.2.0 以降、非 loopback へのバインドには明示的に
+   > `--unsafe-expose` の指定が必要です）。リモート/複数クライアントで
+   > 利用する場合は、認証を行うリバースプロキシ（Basic 認証、mTLS、
+   > OAuth プロキシなど）の背後に配置することを強く推奨します。
+
    ```bash
-   uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484
+   uv run python -m jgrants_mcp_server.core --host 0.0.0.0 --port 8484 --unsafe-expose
    ```
 
 2. **Roo-Code の MCP 設定ファイルを編集**:

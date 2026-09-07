@@ -20,6 +20,10 @@ logger = logging.getLogger(__name__)
 # 定数定義
 API_BASE_URL = "https://api.jgrants-portal.go.jp/exp/v1/public"
 
+# 添付ファイル1件あたりの最大保存サイズ（既定: 20MB）。認証なしで到達可能な
+# ディスク書き込みパスなので、上限を設けないと際限なくディスクを消費できてしまう。
+MAX_ATTACHMENT_BYTES = int(os.environ.get("JGRANTS_MAX_ATTACHMENT_BYTES", 20 * 1024 * 1024))
+
 # FastMCPサーバーの初期化
 mcp = FastMCP("jgrants-mcp-server")
 
@@ -590,7 +594,14 @@ async def get_subsidy_detail(subsidy_id: str) -> Dict[str, Any]:
                                 # 空ファイルチェック
                                 if len(file_content) == 0:
                                     raise ValueError("デコード後のファイルが空です")
-                                
+
+                                # サイズ上限チェック（認証なしで到達可能なディスク書き込みのため）
+                                if len(file_content) > MAX_ATTACHMENT_BYTES:
+                                    raise ValueError(
+                                        f"ファイルサイズが上限を超えています "
+                                        f"({len(file_content)} > {MAX_ATTACHMENT_BYTES} bytes)"
+                                    )
+
                                 file_path = subsidy_dir / safe_file_name
 
                                 with open(file_path, "wb") as f:
@@ -854,12 +865,33 @@ async def usage_guidelines():
 def main():
     """メインエントリーポイント（Streamable HTTPサーバーモード）"""
     import argparse
+    import sys
 
     parser = argparse.ArgumentParser(description="jGrants MCP Server (FastMCP Streamable HTTP)")
     parser.add_argument("--host", default="127.0.0.1", help="ホスト (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8000, help="ポート (default: 8000)")
+    parser.add_argument(
+        "--unsafe-expose",
+        action="store_true",
+        help="非 loopback (0.0.0.0 など) へのバインドを許可する。このサーバーは認証を実装していないため、"
+        "到達可能な範囲にいる誰でも全ツールを呼び出せる状態になる。",
+    )
 
     args = parser.parse_args()
+
+    # このサーバーには認証機構が一切ない。loopback 以外へのバインドは、
+    # 同一ホスト上の他プロセス／同一ネットワーク上の他者に無制限のツール
+    # アクセスを許すことになるため、明示的なオプトインなしでは拒否する。
+    is_loopback = args.host in ("127.0.0.1", "localhost", "::1", "[::1]")
+    if not is_loopback and not args.unsafe_expose:
+        print(
+            f"エラー: {args.host} での外部公開はデフォルトで拒否されています。"
+            "このサーバーは認証を実装していません。\n"
+            "  --unsafe-expose を指定して明示的に有効化するか、"
+            "認証を行うリバースプロキシの背後に配置してください。",
+            file=sys.stderr,
+        )
+        sys.exit(1)
 
     # 常にStreamable HTTPサーバーを起動
     mcp.run(transport="streamable-http", host=args.host, port=args.port)
